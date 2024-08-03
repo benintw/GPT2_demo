@@ -41,9 +41,9 @@ Dependencies
 
 This project relies on several libraries, all of which are listed in the requirements.txt file. Key dependencies include:
 
-PyTorch
-streamlit
-tiktoken
+- PyTorch
+- streamlit
+- tiktoken
 
 To install all dependencies, run:
 
