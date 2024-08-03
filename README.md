@@ -4,6 +4,10 @@ This repository contains the implementation of a GPT (Generative Pre-trained Tra
 
 The purpose of this Streamlit app is to understand the inputs and outputs of every component in the GPT block.
 
+The Streamlit app is deployed at:
+[https://gpt2demo-p4wbz98alxqcuhjdqvpo28.streamlit.app](https://gpt2demo-p4wbz98alxqcuhjdqvpo28.streamlit.app)
+
+
 ## Table of Contents
 
 - [Installation](#installation)
