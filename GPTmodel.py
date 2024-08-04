@@ -187,11 +187,11 @@ class MultiHeadAttention(nn.Module):
 
 
 class LayerNorm(nn.Module):
-    def __init__(self, embed_dim):
+    def __init__(self, d_model):
         super().__init__()
         self.eps = 1e-5
-        self.scale = nn.Parameter(torch.ones(embed_dim))
-        self.shift = nn.Parameter(torch.zeros(embed_dim))
+        self.scale = nn.Parameter(torch.ones(d_model))
+        self.shift = nn.Parameter(torch.zeros(d_model))
 
     def forward(self, x):
         mean = x.mean(dim=-1, keepdim=True)
@@ -222,9 +222,9 @@ class FeedForward(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.layers = nn.Sequential(
-            nn.Linear(cfg["embed_dim"], 4 * cfg["embed_dim"]),
+            nn.Linear(cfg["d_model"], 4 * cfg["d_model"]),
             GELU(),
-            nn.Linear(4 * cfg["embed_dim"], cfg["embed_dim"]),
+            nn.Linear(4 * cfg["d_model"], cfg["d_model"]),
         )
 
     def forward(self, x):
@@ -238,8 +238,8 @@ class TransformerBlock(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.mha = MultiHeadAttention(
-            d_in=cfg["embed_dim"],
-            d_out=cfg["embed_dim"],
+            d_in=cfg["input_dim"],
+            d_out=cfg["d_model"],
             context_length=cfg["context_length"],
             dropout=cfg["drop_rate"],
             num_heads=cfg["n_heads"],
@@ -247,8 +247,8 @@ class TransformerBlock(nn.Module):
         )
 
         self.ff = FeedForward(cfg)
-        self.norm1 = LayerNorm(cfg["embed_dim"])
-        self.norm2 = LayerNorm(cfg["embed_dim"])
+        self.norm1 = LayerNorm(cfg["d_model"])
+        self.norm2 = LayerNorm(cfg["d_model"])
         self.dropout = nn.Dropout(cfg["drop_rate"])
 
     def forward(self, x):
@@ -319,16 +319,16 @@ class TransformerBlock(nn.Module):
 class GPTModel(nn.Module):
     def __init__(self, cfg):
         super().__init__()
-        self.tok_emb = nn.Embedding(cfg["vocab_size"], cfg["embed_dim"])
-        self.pos_emb = nn.Embedding(cfg["context_length"], cfg["embed_dim"])
+        self.tok_emb = nn.Embedding(cfg["vocab_size"], cfg["input_dim"])
+        self.pos_emb = nn.Embedding(cfg["context_length"], cfg["input_dim"])
         self.dropout = nn.Dropout(cfg["drop_rate"])
 
         self.transformer_blocks = nn.Sequential(
             *[TransformerBlock(cfg) for _ in range(cfg["n_layers"])]
         )
 
-        self.final_norm = LayerNorm(cfg["embed_dim"])
-        self.out_head = nn.Linear(cfg["embed_dim"], cfg["vocab_size"], bias=False)
+        self.final_norm = LayerNorm(cfg["d_model"])
+        self.out_head = nn.Linear(cfg["d_model"], cfg["vocab_size"], bias=False)
 
     def forward(self, tokenized_inputs):
         st.write("### GPT Model")

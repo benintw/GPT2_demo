@@ -14,6 +14,19 @@ from GPTmodel import (
     SelfAttention,
 )
 
+"""        
+GPT_CONFIG = {
+            "vocab_size": vocab_size,
+            "context_length": context_length,
+            "input_dim": embed_dim,
+            "d_model": embed_dim,
+            "n_heads": n_heads,
+            "n_layers": n_layers,
+            "drop_rate": drop_rate,
+            "bias": bias,
+        }
+"""
+
 
 def input_text_to_input_embeddings(input_text: str, GPT_CONFIG) -> torch.Tensor:
 
@@ -49,7 +62,7 @@ def input_text_to_input_embeddings(input_text: str, GPT_CONFIG) -> torch.Tensor:
     with st.echo():
         tok_emb_layer = nn.Embedding(
             num_embeddings=GPT_CONFIG["vocab_size"],
-            embedding_dim=GPT_CONFIG["embed_dim"],
+            embedding_dim=GPT_CONFIG["input_dim"],
         )
     st.write(tok_emb_layer)
 
@@ -66,7 +79,7 @@ def input_text_to_input_embeddings(input_text: str, GPT_CONFIG) -> torch.Tensor:
     with st.echo():
         pos_emb_layer = nn.Embedding(
             num_embeddings=GPT_CONFIG["context_length"],
-            embedding_dim=GPT_CONFIG["embed_dim"],
+            embedding_dim=GPT_CONFIG["input_dim"],
         )
     st.write(pos_emb_layer)
 
@@ -98,8 +111,8 @@ def input_text_to_input_embeddings(input_text: str, GPT_CONFIG) -> torch.Tensor:
 def understand_self_attention(input_embeddings, GPT_CONFIG):
 
     with st.echo():
-        d_in = GPT_CONFIG["embed_dim"]
-        d_out = GPT_CONFIG["embed_dim"]
+        d_in = GPT_CONFIG["input_dim"]
+        d_out = GPT_CONFIG["d_model"]
         dropout = GPT_CONFIG["drop_rate"]
         context_length = GPT_CONFIG["context_length"]
         bias = GPT_CONFIG["bias"]
@@ -113,8 +126,8 @@ def understand_self_attention(input_embeddings, GPT_CONFIG):
 def understand_masked_self_attention(input_embeddings, GPT_CONFIG):
 
     with st.echo():
-        d_in = GPT_CONFIG["embed_dim"]
-        d_out = GPT_CONFIG["embed_dim"]
+        d_in = GPT_CONFIG["input_dim"]
+        d_out = GPT_CONFIG["d_model"]
         dropout = GPT_CONFIG["drop_rate"]
         context_length = GPT_CONFIG["context_length"]
         bias = GPT_CONFIG["bias"]
@@ -128,8 +141,8 @@ def understand_masked_self_attention(input_embeddings, GPT_CONFIG):
 def understand_multihead_masked_self_attention(input_embeddings, GPT_CONFIG):
 
     with st.echo():
-        d_in = GPT_CONFIG["embed_dim"]
-        d_out = GPT_CONFIG["embed_dim"]
+        d_in = GPT_CONFIG["input_dim"]
+        d_out = GPT_CONFIG["d_model"]
         dropout = GPT_CONFIG["drop_rate"]
         context_length = GPT_CONFIG["context_length"]
         bias = GPT_CONFIG["bias"]
@@ -157,7 +170,7 @@ def understand_layernorm(input_embeddings, GPT_CONFIG):
 
     with st.echo():
         st.info(input_embeddings.shape)
-        layernorm = LayerNorm(embed_dim=GPT_CONFIG["embed_dim"])
+        layernorm = LayerNorm(d_model=GPT_CONFIG["d_model"])
         output = layernorm(input_embeddings)
         st.info(output.shape)
 

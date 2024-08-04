@@ -3,15 +3,6 @@ import torch.nn as nn
 import streamlit as st
 import tiktoken
 
-from GPTmodel import (
-    GPTModel,
-    TransformerBlock,
-    MultiHeadAttention,
-    LayerNorm,
-    GELU,
-    FeedForward,
-    SelfAttention,
-)
 
 from understand_utils import (
     input_text_to_input_embeddings,
@@ -104,7 +95,8 @@ def main():
         GPT_CONFIG = {
             "vocab_size": vocab_size,
             "context_length": context_length,
-            "embed_dim": embed_dim,
+            "input_dim": embed_dim,
+            "d_model": embed_dim,
             "n_heads": n_heads,
             "n_layers": n_layers,
             "drop_rate": drop_rate,
