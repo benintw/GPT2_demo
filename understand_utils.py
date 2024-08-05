@@ -104,6 +104,8 @@ def understand_self_attention(input_embeddings, GPT_CONFIG: dict):
         output = sa(input_embeddings, masking=False)
         output.shape
 
+    st.write("end of `understand_self_attention()`")
+
 
 def understand_masked_self_attention(input_embeddings, GPT_CONFIG: dict):
 
@@ -111,7 +113,7 @@ def understand_masked_self_attention(input_embeddings, GPT_CONFIG: dict):
 
         input_embeddings.shape
         sa = SelfAttention(GPT_CONFIG)
-        output = sa(input_embeddings, masking=True)
+        output = sa(input_embeddings)
         output.shape
 
 
