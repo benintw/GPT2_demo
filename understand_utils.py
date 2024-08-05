@@ -14,19 +14,6 @@ from GPTmodel import (
     SelfAttention,
 )
 
-"""        
-GPT_CONFIG = {
-            "vocab_size": vocab_size,
-            "context_length": context_length,
-            "input_dim": embed_dim,
-            "d_model": embed_dim,
-            "n_heads": n_heads,
-            "n_layers": n_layers,
-            "drop_rate": drop_rate,
-            "bias": bias,
-        }
-"""
-
 
 def input_text_to_input_embeddings(input_text: str, GPT_CONFIG) -> torch.Tensor:
 
