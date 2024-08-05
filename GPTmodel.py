@@ -27,15 +27,15 @@ class SelfAttention(nn.Module):
 
         queries = self.Wq(inputs)
         st.markdown("### Queries")
-        st.write(f"Shape: `{queries.shape}` (batch_size, num_tokens, d_in)")
+        st.write(f"Shape: `{queries.shape}` (batch_size, num_tokens, d_model)")
 
         keys = self.Wk(inputs)
         st.markdown("### Keys")
-        st.write(f"Shape: `{keys.shape}` (batch_size, num_tokens, d_in)")
+        st.write(f"Shape: `{keys.shape}` (batch_size, num_tokens, d_model)")
 
         values = self.Wv(inputs)
         st.markdown("### Values")
-        st.write(f"Shape: `{values.shape}` (batch_size, num_tokens, d_in)")
+        st.write(f"Shape: `{values.shape}` (batch_size, num_tokens, d_model)")
 
         st.markdown("### Attention Scores Calculation")
         st.code("attn_scores = queries @ keys.transpose(1, 2)", language="python")
@@ -64,7 +64,7 @@ class SelfAttention(nn.Module):
 
         context_vector = attn_weights @ values
         st.markdown("### Output from Self-Attention")
-        st.write(f"Shape: `{context_vector.shape}` (batch_size, num_tokens, d_in)")
+        st.write(f"Shape: `{context_vector.shape}` (batch_size, num_tokens, d_model)")
 
         return context_vector
 
@@ -100,9 +100,11 @@ class MultiHeadAttention(nn.Module):
         keys = self.Wk(inputs)
         queries = self.Wq(inputs)
         values = self.Wv(inputs)
-        st.write(f"---- (keys).shape:  `{keys.shape}` (batch, num_tokens, d_out)")
-        st.write(f"---- (queries).shape:  `{queries.shape}` (batch, num_tokens, d_out)")
-        st.write(f"---- (values).shape:  `{values.shape}` (batch, num_tokens, d_out)")
+        st.write(f"---- (keys).shape:  `{keys.shape}` (batch, num_tokens, d_model)")
+        st.write(
+            f"---- (queries).shape:  `{queries.shape}` (batch, num_tokens, d_model)"
+        )
+        st.write(f"---- (values).shape:  `{values.shape}` (batch, num_tokens, d_model)")
         d_k = keys.shape[-1]
 
         keys = keys.view(batch_size, num_tokens, self.num_heads, self.head_dim)
@@ -262,51 +264,51 @@ class TransformerBlock(nn.Module):
 
         x = self.norm1(x)
         st.write(
-            f"(After LayerNorm1).shape : `{x.shape}` (batch_size, num_tokens, d_in)"
+            f"(After LayerNorm1).shape : `{x.shape}` (batch_size, num_tokens, d_model)"
         )
 
         x = self.mha(x)
         st.write(
-            f"(After MultiHead-Attention).shape : `{x.shape}`  (batch_size, num_tokens, d_out)"
+            f"(After MultiHead-Attention).shape : `{x.shape}`  (batch_size, num_tokens, d_model)"
         )
 
         x = self.dropout(x)
         st.write(
-            f"(After Dropout).shape : `{x.shape}`  (batch_size, num_tokens, d_out)"
+            f"(After Dropout).shape : `{x.shape}`  (batch_size, num_tokens, d_model)"
         )
 
         x = x + shortcut
         st.write(
-            f"(After adding Residual).shape : `{x.shape}`  (batch_size, num_tokens, d_out)"
+            f"(After adding Residual).shape : `{x.shape}`  (batch_size, num_tokens, d_model)"
         )
 
         shortcut = x
         st.write(
-            f"(shortcut).shape : `{shortcut.shape}`  (batch_size, num_tokens, d_out)"
+            f"(shortcut).shape : `{shortcut.shape}`  (batch_size, num_tokens, d_model)"
         )
 
         x = self.norm2(x)
         st.write(
-            f"(After LayerNorm2).shape : `{x.shape}`  (batch_size, num_tokens, d_out)"
+            f"(After LayerNorm2).shape : `{x.shape}`  (batch_size, num_tokens, d_model)"
         )
 
         x = self.ff(x)
         st.write(
-            f"(After FeedForward).shape : `{x.shape}`  (batch_size, num_tokens, d_out)"
+            f"(After FeedForward).shape : `{x.shape}`  (batch_size, num_tokens, d_model)"
         )
 
         x = self.dropout(x)
         st.write(
-            f"(After Dropout).shape : `{x.shape}`  (batch_size, num_tokens, d_out)"
+            f"(After Dropout).shape : `{x.shape}`  (batch_size, num_tokens, d_model)"
         )
 
         x = x + shortcut
         st.write(
-            f"(After adding Residual).shape : `{x.shape}`  (batch_size, num_tokens, d_out)"
+            f"(After adding Residual).shape : `{x.shape}`  (batch_size, num_tokens, d_model)"
         )
 
         st.write(
-            f"(Output of TransformerBlock).shape : `{x.shape}`  (batch_size, num_tokens, d_out)"
+            f"(Output of TransformerBlock).shape : `{x.shape}`  (batch_size, num_tokens, d_model)"
         )
         st.write("  ", "<" * 10, "Transformer Block End", ">" * 10)
 

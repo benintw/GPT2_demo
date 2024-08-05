@@ -118,12 +118,6 @@ def understand_masked_self_attention(input_embeddings, GPT_CONFIG: dict):
 def understand_multihead_masked_self_attention(input_embeddings, GPT_CONFIG):
 
     with st.echo():
-        # d_in = GPT_CONFIG["input_dim"]
-        # d_out = GPT_CONFIG["d_model"]
-        # dropout = GPT_CONFIG["drop_rate"]
-        # context_length = GPT_CONFIG["context_length"]
-        # bias = GPT_CONFIG["bias"]
-        # num_heads = GPT_CONFIG["n_heads"]
 
         input_embeddings.shape
         mha = MultiHeadAttention(GPT_CONFIG, masking=True)

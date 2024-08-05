@@ -16,6 +16,19 @@ from understand_utils import (
 )
 
 
+def predict_next_token(output_gpt, tokenizer):
+    st.write("#" * 20)
+    last_token_in_batch = output_gpt[:, -1, :]
+    probas = torch.softmax(last_token_in_batch, dim=-1)
+    next_id_pred = torch.argmax(probas, dim=-1)
+    st.write(f"Predicted next token id: `{next_id_pred}`")
+
+    next_word_pred = tokenizer.decode([next_id_pred])
+    st.write(f"Predicted next word: {next_word_pred}")
+
+    return next_id_pred, next_word_pred
+
+
 def main():
     st.set_page_config(page_title="GPT-2 Demo", layout="wide")
 
@@ -192,6 +205,13 @@ def main():
         st.info(f"Input Embeddings Shape: {input_embeddings.shape}")
         if analysis_step3_cb:
             st.info(f"GPT Output Shape: {gpt_output.shape}")
+
+        tokenizer = tiktoken.get_encoding("gpt2")
+        next_id_pred, next_word_pred = predict_next_token(gpt_output, tokenizer)
+
+        st.markdown("# Input text concat'd with the predicted word:")
+        st.success(input_text + " " + next_word_pred)
+
     else:
         st.info("Please enter a sentence in the sidebar to start the demonstration.")
 
