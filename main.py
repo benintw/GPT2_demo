@@ -210,6 +210,7 @@ def main():
         next_id_pred, next_word_pred = predict_next_token(gpt_output, tokenizer)
 
         st.markdown("# Input text concat'd with the predicted word:")
+        st.warning("This is the output of an untrained GPT model")
         st.success(input_text + " " + next_word_pred)
 
     else:
