@@ -4,16 +4,19 @@ import streamlit as st
 
 
 class SelfAttention(nn.Module):
-    def __init__(self, d_in, d_out, dropout, bias, context_length):
+    def __init__(self, cfg):
         super().__init__()
-        self.d_out = d_out
+        self.d_out = cfg["d_model"]
 
-        self.Wq = nn.Linear(d_in, d_out, bias)
-        self.Wk = nn.Linear(d_in, d_out, bias)
-        self.Wv = nn.Linear(d_in, d_out, bias)
-        self.dropout = nn.Dropout(dropout)
+        self.Wq = nn.Linear(cfg["input_dim"], cfg["d_model"], cfg["bias"])
+        self.Wk = nn.Linear(cfg["input_dim"], cfg["d_model"], cfg["bias"])
+        self.Wv = nn.Linear(cfg["input_dim"], cfg["d_model"], cfg["bias"])
+        self.dropout = nn.Dropout(cfg["dropout"])
         self.register_buffer(
-            "mask", torch.triu(torch.ones(context_length, context_length), diagonal=1)
+            "mask",
+            torch.triu(
+                torch.ones(cfg["context_length"], cfg["context_length"]), diagonal=1
+            ),
         )
 
     def forward(self, inputs, masking=True):
@@ -67,24 +70,25 @@ class SelfAttention(nn.Module):
 
 
 class MultiHeadAttention(nn.Module):
-    def __init__(
-        self, d_in, d_out, context_length, dropout, num_heads, bias=False, masking=True
-    ):
+    def __init__(self, cfg, masking=True):
         super().__init__()
-        self.d_out = d_out
-        self.num_heads = num_heads
+        self.d_out = cfg["d_model"]
+        self.num_heads = cfg["n_heads"]
         self.masking = masking
 
-        assert d_out % num_heads == 0, "d_out must be divisible by num_heads"
+        assert self.d_out % self.num_heads == 0, "d_out must be divisible by num_heads"
 
-        self.head_dim = d_out // num_heads
-        self.Wq = nn.Linear(d_in, d_out, bias)
-        self.Wk = nn.Linear(d_in, d_out, bias)
-        self.Wv = nn.Linear(d_in, d_out, bias)
-        self.out_proj = nn.Linear(d_out, d_out, bias)
-        self.dropout = nn.Dropout(dropout)
+        self.head_dim = cfg["d_model"] // cfg["n_heads"]
+        self.Wq = nn.Linear(cfg["input_dim"], cfg["d_model"], cfg["bias"])
+        self.Wk = nn.Linear(cfg["input_dim"], cfg["d_model"], cfg["bias"])
+        self.Wv = nn.Linear(cfg["input_dim"], cfg["d_model"], cfg["bias"])
+        self.out_proj = nn.Linear(cfg["d_model"], cfg["d_model"], cfg["bias"])
+        self.dropout = nn.Dropout(cfg["dropout"])
         self.register_buffer(
-            "mask", torch.triu(torch.ones(context_length, context_length), diagonal=1)
+            "mask",
+            torch.triu(
+                torch.ones(cfg["context_length"], cfg["context_length"]), diagonal=1
+            ),
         )
 
     def forward(self, inputs):
@@ -237,19 +241,12 @@ class FeedForward(nn.Module):
 class TransformerBlock(nn.Module):
     def __init__(self, cfg):
         super().__init__()
-        self.mha = MultiHeadAttention(
-            d_in=cfg["input_dim"],
-            d_out=cfg["d_model"],
-            context_length=cfg["context_length"],
-            dropout=cfg["drop_rate"],
-            num_heads=cfg["n_heads"],
-            bias=cfg["bias"],
-        )
+        self.mha = MultiHeadAttention(cfg)
 
         self.ff = FeedForward(cfg)
         self.norm1 = LayerNorm(cfg["d_model"])
         self.norm2 = LayerNorm(cfg["d_model"])
-        self.dropout = nn.Dropout(cfg["drop_rate"])
+        self.dropout = nn.Dropout(cfg["dropout"])
 
     def forward(self, x):
         st.write("### Transformer Block")
@@ -321,7 +318,7 @@ class GPTModel(nn.Module):
         super().__init__()
         self.tok_emb = nn.Embedding(cfg["vocab_size"], cfg["input_dim"])
         self.pos_emb = nn.Embedding(cfg["context_length"], cfg["input_dim"])
-        self.dropout = nn.Dropout(cfg["drop_rate"])
+        self.dropout = nn.Dropout(cfg["dropout"])
 
         self.transformer_blocks = nn.Sequential(
             *[TransformerBlock(cfg) for _ in range(cfg["n_layers"])]

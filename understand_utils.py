@@ -95,32 +95,22 @@ def input_text_to_input_embeddings(input_text: str, GPT_CONFIG) -> torch.Tensor:
     return input_embeds, encoded_tensor
 
 
-def understand_self_attention(input_embeddings, GPT_CONFIG):
+def understand_self_attention(input_embeddings, GPT_CONFIG: dict):
 
     with st.echo():
-        d_in = GPT_CONFIG["input_dim"]
-        d_out = GPT_CONFIG["d_model"]
-        dropout = GPT_CONFIG["drop_rate"]
-        context_length = GPT_CONFIG["context_length"]
-        bias = GPT_CONFIG["bias"]
 
         input_embeddings.shape
-        sa = SelfAttention(d_in, d_out, dropout, bias, context_length)
+        sa = SelfAttention(GPT_CONFIG)
         output = sa(input_embeddings, masking=False)
         output.shape
 
 
-def understand_masked_self_attention(input_embeddings, GPT_CONFIG):
+def understand_masked_self_attention(input_embeddings, GPT_CONFIG: dict):
 
     with st.echo():
-        d_in = GPT_CONFIG["input_dim"]
-        d_out = GPT_CONFIG["d_model"]
-        dropout = GPT_CONFIG["drop_rate"]
-        context_length = GPT_CONFIG["context_length"]
-        bias = GPT_CONFIG["bias"]
 
         input_embeddings.shape
-        sa = SelfAttention(d_in, d_out, dropout, bias, context_length)
+        sa = SelfAttention(GPT_CONFIG)
         output = sa(input_embeddings, masking=True)
         output.shape
 
@@ -128,17 +118,15 @@ def understand_masked_self_attention(input_embeddings, GPT_CONFIG):
 def understand_multihead_masked_self_attention(input_embeddings, GPT_CONFIG):
 
     with st.echo():
-        d_in = GPT_CONFIG["input_dim"]
-        d_out = GPT_CONFIG["d_model"]
-        dropout = GPT_CONFIG["drop_rate"]
-        context_length = GPT_CONFIG["context_length"]
-        bias = GPT_CONFIG["bias"]
-        num_heads = GPT_CONFIG["n_heads"]
+        # d_in = GPT_CONFIG["input_dim"]
+        # d_out = GPT_CONFIG["d_model"]
+        # dropout = GPT_CONFIG["drop_rate"]
+        # context_length = GPT_CONFIG["context_length"]
+        # bias = GPT_CONFIG["bias"]
+        # num_heads = GPT_CONFIG["n_heads"]
 
         input_embeddings.shape
-        mha = MultiHeadAttention(
-            d_in, d_out, context_length, dropout, num_heads, masking=True
-        )
+        mha = MultiHeadAttention(GPT_CONFIG, masking=True)
 
         output = mha(input_embeddings)
         output.shape

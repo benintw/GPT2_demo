@@ -1,3 +1,7 @@
-breakdown.ipynb
+# Ignore Python cache files
+__pycache__/
 
-the-verdict.txt
+# Ignore specific files
+GPT2model_cleanup.py
+breakdown.ipynb
+main2.py

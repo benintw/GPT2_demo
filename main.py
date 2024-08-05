@@ -78,7 +78,7 @@ def main():
             help="The number of transformer blocks in the model.",
         )
 
-        drop_rate = st.slider(
+        dropout = st.slider(
             "Dropout Rate",
             min_value=0.0,
             max_value=1.0,
@@ -99,7 +99,7 @@ def main():
             "d_model": embed_dim,
             "n_heads": n_heads,
             "n_layers": n_layers,
-            "drop_rate": drop_rate,
+            "dropout": dropout,
             "bias": bias,
         }
 
